@@ -464,3 +464,30 @@ func isZero(v reflect.Value) bool {
 	}
 	return false
 }
+
+const atSymbolEscapeSeq = "🌝🌝🌝🌝🌝"
+
+var atSymbolEscapeSeqBytes = []byte(atSymbolEscapeSeq)
+
+func ExtractAtSymbolText(input interface{}) (string, bool) {
+	if str, ok := input.(string); ok {
+		if strings.HasPrefix(str, atSymbolEscapeSeq) {
+			return str[len(atSymbolEscapeSeq):], true
+		}
+	}
+	return "", false
+}
+
+func EscapeAtSymbol(str string) (string, bool) {
+	if strings.HasPrefix(str, "@") {
+		return atSymbolEscapeSeq + str[1:], true
+	}
+	return str, false
+}
+
+func UnescapeAtSymbol(str string) (string, bool) {
+	if strings.HasPrefix(str, atSymbolEscapeSeq) {
+		return "@" + str[len(atSymbolEscapeSeq):], true
+	}
+	return str, false
+}

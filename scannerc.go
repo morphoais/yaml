@@ -794,6 +794,16 @@ func yaml_parser_fetch_next_token(parser *yaml_parser_t) bool {
 		return yaml_parser_fetch_flow_scalar(parser, false)
 	}
 
+	// Is it an @?
+	if parser.buffer[parser.buffer_pos] == '@' {
+		newBuf := make([]byte, len(parser.buffer)+len(atSymbolEscapeSeqBytes)-1, cap(parser.buffer)+len(atSymbolEscapeSeqBytes)-1)
+		copy(newBuf, parser.buffer[:parser.buffer_pos])
+		copy(newBuf[parser.buffer_pos:], atSymbolEscapeSeqBytes)
+		copy(newBuf[parser.buffer_pos+len(atSymbolEscapeSeqBytes):], parser.buffer[parser.buffer_pos+1:])
+		parser.buffer = newBuf
+		return yaml_parser_fetch_plain_scalar(parser)
+	}
+
 	// Is it a plain scalar?
 	//
 	// A plain scalar may start with any non-blank characters except
