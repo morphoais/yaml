@@ -437,7 +437,15 @@ func (d *decoder) scalar(n *node, out reflect.Value) bool {
 			// TODO(v3) Drop this.
 			out.Set(reflect.ValueOf(n.value))
 		} else {
-			out.Set(reflect.ValueOf(resolved))
+			resolvedv := reflect.ValueOf(resolved)
+			switch resolvedv.Kind() {
+			case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+				var t int64
+				out.Set(resolvedv.Convert(reflect.TypeOf(t)))
+			default:
+				out.Set(reflect.ValueOf(resolved))
+			}
+
 		}
 		return true
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
