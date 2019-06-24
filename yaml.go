@@ -485,9 +485,30 @@ func EscapeAtSymbol(str string) (string, bool) {
 	return str, false
 }
 
-func UnescapeAtSymbol(str string) (string, bool) {
+func UnescapeAtSymbol(str string) string {
+	if strings.HasPrefix(str, atSymbolEscapeSeq) {
+		return "@" + str[len(atSymbolEscapeSeq):]
+	}
+	return str
+}
+
+func UnescapeAtSymbolOk(str string) (string, bool) {
 	if strings.HasPrefix(str, atSymbolEscapeSeq) {
 		return "@" + str[len(atSymbolEscapeSeq):], true
+	}
+	return str, false
+}
+
+func UnescapeAllAtSymbols(str string) string {
+	if strings.Contains(str, atSymbolEscapeSeq) {
+		return strings.ReplaceAll(str, atSymbolEscapeSeq, "@")
+	}
+	return str
+}
+
+func UnescapeAllAtSymbolsOk(str string) (string, bool) {
+	if strings.Contains(str, atSymbolEscapeSeq) {
+		return strings.ReplaceAll(str, atSymbolEscapeSeq, "@"), true
 	}
 	return str, false
 }
