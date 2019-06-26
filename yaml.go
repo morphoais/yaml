@@ -469,18 +469,55 @@ const atSymbolEscapeSeq = "🌝🌝🌝🌝🌝"
 
 var atSymbolEscapeSeqBytes = []byte(atSymbolEscapeSeq)
 
-func ExtractAtSymbolText(input interface{}) (string, bool) {
-	if str, ok := input.(string); ok {
-		if strings.HasPrefix(str, atSymbolEscapeSeq) {
-			return str[len(atSymbolEscapeSeq):], true
-		}
+func StartsWithEscapedAtSymbol(str string) bool {
+	return strings.HasPrefix(str, atSymbolEscapeSeq)
+}
+
+func HasEscapedAtSymbol(str string) bool {
+	return strings.Contains(str, atSymbolEscapeSeq)
+}
+
+func ExtractAtSymbolText(str string) (string, bool) {
+	if strings.HasPrefix(str, atSymbolEscapeSeq) {
+		return str[len(atSymbolEscapeSeq):], true
 	}
 	return "", false
 }
 
-func EscapeAtSymbol(str string) (string, bool) {
+func ExtractAtSymbolTextInter(input interface{}) (string, bool) {
+	if str, ok := input.(string); ok {
+		return ExtractAtSymbolText(str)
+	}
+	if strPtr, ok := input.(*string); ok {
+		return ExtractAtSymbolText(*strPtr)
+	}
+	return "", false
+}
+
+func EscapeAtSymbol(str string) string {
+	if strings.HasPrefix(str, "@") {
+		return atSymbolEscapeSeq + str[1:]
+	}
+	return str
+}
+
+func EscapeAtSymbolOk(str string) (string, bool) {
 	if strings.HasPrefix(str, "@") {
 		return atSymbolEscapeSeq + str[1:], true
+	}
+	return str, false
+}
+
+func EscapeAllAtSymbols(str string) string {
+	if strings.Contains(str, "@") {
+		return strings.ReplaceAll(str, "@", atSymbolEscapeSeq)
+	}
+	return str
+}
+
+func EscapeAllAtSymbolsOk(str string) (string, bool) {
+	if strings.Contains(str, "@") {
+		return strings.ReplaceAll(str, "@", atSymbolEscapeSeq), true
 	}
 	return str, false
 }
