@@ -1,4 +1,4 @@
-module github.com/cortexlabs/yaml
+module gitlab.com/ais8/yaml
 
 go 1.15
 
